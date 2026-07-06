@@ -5,16 +5,21 @@ import indicators as ind
 pd.set_option('display.max_columns', None)
 
 ticker = yf.Ticker("AAPL")
+vxticker = yf.Ticker("^VIX")
 df = ticker.history(period="5y")
-
+vix_df = vxticker.history(period="5y")
+vix_df.rename(columns={"Close":"VIX"}, inplace=True)
+df.index = df.index.tz_localize(None)
+vix_df.index = vix_df.index.tz_localize(None)
+df = df.join(vix_df["VIX"], how = 'left')
 df["MA50"] = ind.calculate_ma(df["Close"], window=50)
 df["MA200"] = ind.calculate_ma(df["Close"], window=200)
 df["RSI"] = ind.calculate_rsi(df["Close"], window=14)
 df["Return"] = df["Close"].pct_change()
-df["Raw_signal"] = (df["MA50"] > df["MA200"]).astype(int)
+df["Raw_signal"] = ((df["MA50"] > df["MA200"]) & (df["VIX"] <25)).astype(int)
 df["Signal"] = df["Raw_signal"].shift(1)
 df["Strategy_Return"] = df["Return"] * df["Signal"]
-print(df[["Close", "MA50", "MA200", "Return", "RSI"]].tail(10))
+print(df[["Close", "MA50", "MA200", "Raw_signal","VIX"]].tail(10))
 
 
 plt.figure(figsize=(12,6))
