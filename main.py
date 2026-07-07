@@ -19,7 +19,10 @@ df["Return"] = df["Close"].pct_change()
 df["Raw_signal"] = ((df["MA50"] > df["MA200"]) & (df["VIX"] <25)).astype(int)
 df["Signal"] = df["Raw_signal"].shift(1)
 df["Strategy_Return"] = df["Return"] * df["Signal"]
-print(df[["Close", "MA50", "MA200", "Raw_signal","VIX"]].tail(10))
+df["Position"] = df["Signal"]
+df["Entry"]= df["Signal"].diff() == 1
+df["Exit"]= df["Signal"].diff() == -1
+print(df[df["Exit"] == True][["Close", "Signal", "Entry", "Exit"]].head(10))
 
 
 plt.figure(figsize=(12,6))
