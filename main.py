@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import indicators as ind
 import numpy as np
+import backtest as bt
 pd.set_option('display.max_columns', None)
 
 ticker = yf.Ticker("AAPL")
@@ -26,9 +27,12 @@ df["Exit"]= df["Signal"].diff() == -1
 df["Cost"] = np.zeros(len(df))
 df.loc[df["Entry"]|df["Exit"], "Cost"] = -0.001
 df["Strategy_Return"] = df["Return"] * df["Signal"] + df["Cost"]
-print(df["Close"].head(10))
-print((1 + df["Return"]).cumprod().iloc[-1])
-print((1 + df["Strategy_Return"]).cumprod().iloc[-1])
+bt_df, trade_df = bt.run_simulation(df, initial_capital=10000)
+print(bt_df[["Close", "Portfolio_Value"]].tail(10))
+print(trade_df[["Action", "Price", "Shares", "Date", "Portfolio_Value"]].tail(5))
+#print(df["Close"].head(10))
+#print((1 + df["Return"]).cumprod().iloc[-1])
+#print((1 + df["Strategy_Return"]).cumprod().iloc[-1])
 
 plt.figure(figsize=(12,6))
 plt.plot(df.index, df["Close"], label="AAPL Close", linewidth=1)
