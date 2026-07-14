@@ -4,6 +4,7 @@ import pandas as pd
 import indicators as ind
 import numpy as np
 import backtest as bt
+import metrics as met
 pd.set_option('display.max_columns', None)
 
 ticker = yf.Ticker("AAPL")
@@ -30,6 +31,8 @@ df["Strategy_Return"] = df["Return"] * df["Signal"] + df["Cost"]
 bt_df, trade_df = bt.run_simulation(df, initial_capital=10000)
 print(bt_df[["Close", "Portfolio_Value"]].tail(10))
 print(trade_df[["Action", "Price", "Shares", "Date", "Portfolio_Value"]].tail(5))
+print("Sharpe Ratio:", met.calculate_sharpe(bt_df["Strategy_Return"]))
+print("CAGR:", met.calculate_cagr(bt_df["Strategy_Return"], years=(df.index[-1] - df.index[0]).days / 365.25))
 #print(df["Close"].head(10))
 #print((1 + df["Return"]).cumprod().iloc[-1])
 #print((1 + df["Strategy_Return"]).cumprod().iloc[-1])
