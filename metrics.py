@@ -22,10 +22,11 @@ def calculate_win_rate(trades_df: pd.DataFrame):
     total = min_len
     return wins / total if total > 0 else 0
 
-def calculate_summary_metrics(returns: pd.Series, trade_df: pd.DataFrame, years: float):
+def calculate_summary_metrics(bt_df: pd.DataFrame, trade_df: pd.DataFrame, years: float):
+    returns = bt_df["Strategy_Return"]
     sharpe = calculate_sharpe(returns)
     cagr = calculate_cagr(returns, years)
-    max_drawdown = calculate_max_drawdown(trade_df["Portfolio_Value"])
+    max_drawdown = calculate_max_drawdown(bt_df["Portfolio_Value"])
     win_rate = calculate_win_rate(trade_df)
     return {"Sharpe Ratio": sharpe,"CAGR": cagr,"Max Drawdown": max_drawdown,"Win Rate": win_rate}
 
