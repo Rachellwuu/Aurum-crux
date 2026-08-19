@@ -11,3 +11,9 @@ def calculate_rsi(series:pd.Series, window:int =14)-> pd.Series:
     loss = diff.clip(upper=0).abs()
     rsi = 100 - (100 / (1 + gain.rolling(window=window).mean() / loss.rolling(window=window).mean()))
     return rsi
+
+def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
+    df["MA50"] = calculate_ma(df["Close"], window=50)
+    df["MA200"] = calculate_ma(df["Close"], window=200)
+    df["RSI"] = calculate_rsi(df["Close"], window=14)
+    return df
