@@ -6,6 +6,7 @@ import backtest as bt
 import metrics as met
 import data as d
 import strategy as strat
+import visualize as viz
 pd.set_option('display.max_columns', None)
 
 
@@ -19,5 +20,5 @@ print(summary)
 
 sweep_results = strat.run_parameter_sweep(df,ma_pairs=[(20, 50), (50, 200), (10, 30)], vix_thresholds=[20, 25, 30])
 print(pd.DataFrame(sweep_results))
-
+viz.plot_results(bt_df, df)
 
