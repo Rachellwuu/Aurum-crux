@@ -7,6 +7,7 @@ import metrics as met
 import data as d
 import strategy as strat
 import visualize as viz
+import json
 pd.set_option('display.max_columns', None)
 
 
@@ -22,3 +23,6 @@ sweep_results = strat.run_parameter_sweep(df,ma_pairs=[(20, 50), (50, 200), (10,
 print(pd.DataFrame(sweep_results))
 viz.plot_results(bt_df, df)
 
+data = {"summary": summary, "portfolio": bt_df["Portfolio_Value"].to_list(), "trades": trade_df.to_dict(orient = "records"), "sweep_results": sweep_results, "dates": bt_df.index.strftime("%Y-%m-%d").tolist(), "buy_and_hold": ((1+df["Return"].fillna(0)).cumprod() * 10000).to_list()}
+with open("results.json", "w") as f:
+    json.dump(data, f, default=str)
